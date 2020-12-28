@@ -20,33 +20,33 @@ import br.com.alura.forum.controller.form.LoginForm;
 
 @RestController
 @RequestMapping("/auth")
-@Profile("prod")
+@Profile(value = {"prod", "test"})
 public class AutenticacaoController {
 
-	// Para disparar manualmente o processo de autenticação no Spring Security
-	// Para poder injetar o AuthenticationManager no controller, devemos criar um
-	// método anotado com @Bean, na classe SecurityConfigurations
-	@Autowired
-	private AuthenticationManager authManager;
+    // Para disparar manualmente o processo de autenticação no Spring Security
+    // Para poder injetar o AuthenticationManager no controller, devemos criar um
+    // método anotado com @Bean, na classe SecurityConfigurations
+    @Autowired
+    private AuthenticationManager authManager;
 
-	@Autowired
-	private TokenService tokenService;
+    @Autowired
+    private TokenService tokenService;
 
-	@PostMapping
-	public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginForm form) {
-		UsernamePasswordAuthenticationToken dadosLogin = form.converter();
+    @PostMapping
+    public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginForm form) {
+        UsernamePasswordAuthenticationToken dadosLogin = form.converter();
 
-		try {
-			// Faz a autenticação
-			Authentication authentication = authManager.authenticate(dadosLogin);
+        try {
+            // Faz a autenticação
+            Authentication authentication = authManager.authenticate(dadosLogin);
 
-			// Gera o token
-			String token = tokenService.gerarToken(authentication);
+            // Gera o token
+            String token = tokenService.gerarToken(authentication);
 
-			return ResponseEntity.ok(new TokenDto(token, "Bearer"));
-		} catch (AuthenticationException e) {
-			return ResponseEntity.badRequest().build();
-		}
-	}
+            return ResponseEntity.ok(new TokenDto(token, "Bearer"));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
 }
